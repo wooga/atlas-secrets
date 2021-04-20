@@ -16,28 +16,21 @@
 
 package wooga.gradle.secrets.internal
 
-import org.gradle.api.internal.provider.AbstractProvider
-import org.gradle.api.provider.Provider
+import javax.crypto.SecretKeyFactory
+import javax.crypto.spec.PBEKeySpec
+import javax.crypto.spec.SecretKeySpec
+import java.security.SecureRandom
+import java.security.spec.KeySpec
 
-class MemoisationProvider<T> extends AbstractProvider<T> implements Provider<T> {
+class EncryptionSpecHelper {
+    static SecretKeySpec createSecretKey(String passphrase) {
+        SecureRandom random = new SecureRandom()
+        byte[] salt = new byte[16]
+        random.nextBytes(salt)
 
-    private T inferredValue
-    private final Provider<T> inner
-
-    MemoisationProvider(Provider<T> provider) {
-        this.inner = provider
-    }
-
-    @Override
-    Class<T> getType() {
-        null
-    }
-
-    @Override
-    T getOrNull() {
-        if(!inferredValue) {
-            inferredValue = inner.getOrNull()
-        }
-        inferredValue
+        KeySpec spec = new PBEKeySpec(passphrase.chars, salt, 65536, 256)
+        SecretKeyFactory f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+        byte[] key = f.generateSecret(spec).getEncoded();
+        new SecretKeySpec(key, "AES");
     }
 }
