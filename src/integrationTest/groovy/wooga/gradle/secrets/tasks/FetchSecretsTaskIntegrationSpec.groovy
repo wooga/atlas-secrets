@@ -178,7 +178,7 @@ class FetchSecretsTaskIntegrationSpec extends IntegrationSpec {
         buildFile << """
             class Consumer extends DefaultTask {
                 @InputFile
-                final RegularFileProperty inputFile = newInputFile()
+                final RegularFileProperty inputFile = project.objects.fileProperty()
             
                 @TaskAction
                 void consume() {

@@ -33,7 +33,11 @@ import javax.crypto.spec.SecretKeySpec
 class FetchSecrets extends DefaultTask implements SecretSpec {
 
     @Input
-    final ListProperty<String> secretIds
+    private final ListProperty<String> secretIds
+
+    ListProperty<String> getSecretIds() {
+        secretIds
+    }
 
     void setSecretIds(Iterable<String> value) {
         secretIds.set(value)
@@ -56,7 +60,11 @@ class FetchSecrets extends DefaultTask implements SecretSpec {
     }
 
     @Input
-    final Property<SecretKeySpec> secretsKey
+    private final Property<SecretKeySpec> secretsKey
+
+    Property<SecretKeySpec> getSecretsKey(){
+        secretsKey
+    }
 
     void setSecretsKey(SecretKeySpec key) {
         secretsKey.set(key)
@@ -94,7 +102,11 @@ class FetchSecrets extends DefaultTask implements SecretSpec {
     }
 
     @Internal
-    final Property<SecretResolver> resolver
+    private final Property<SecretResolver> resolver
+
+    Property<SecretResolver> getResolver() {
+        resolver
+    }
 
     void setResolver(SecretResolver value) {
         resolver.set(value)
@@ -105,11 +117,15 @@ class FetchSecrets extends DefaultTask implements SecretSpec {
     }
 
     @OutputFile
-    final RegularFileProperty secretsFile
+    private final RegularFileProperty secretsFile
+
+    RegularFileProperty getSecretsFile(){
+        secretsFile
+    }
 
     FetchSecrets() {
         secretIds = project.objects.listProperty(String)
-        secretsFile = newOutputFile()
+        secretsFile = project.objects.fileProperty()
         resolver = project.objects.property(SecretResolver)
         secretsKey = project.objects.property(SecretKeySpec)
     }

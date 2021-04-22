@@ -39,7 +39,7 @@ class DefaultSecretsPluginExtension implements SecretsPluginExtension {
         this.project = project
         secretsKey = project.objects.property(SecretKeySpec.class)
 
-        secretsKey.set(new MemoisationProvider<SecretKeySpec>(project.provider({
+        secretsKey.set(project.provider({
             String keyPath = System.getenv().get(SecretsConsts.SECRETS_KEY_ENV_VAR) ?:
                     project.properties.get(SecretsConsts.SECRETS_KEY_OPTION, null)
 
@@ -52,7 +52,7 @@ class DefaultSecretsPluginExtension implements SecretsPluginExtension {
             SecretKeyFactory f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
             byte[] key = f.generateSecret(spec).getEncoded();
             return new SecretKeySpec(key, "AES");
-        })))
+        }.memoize()))
 
         secretResolver = project.objects.property(SecretResolver)
     }
