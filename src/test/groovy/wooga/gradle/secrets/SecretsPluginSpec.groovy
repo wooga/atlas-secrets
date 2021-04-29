@@ -17,6 +17,8 @@
 package wooga.gradle.secrets
 
 import nebula.test.ProjectSpec
+import org.gradle.api.Project
+import org.gradle.api.UnknownTaskException
 import spock.lang.Unroll
 import wooga.gradle.secrets.tasks.FetchSecrets
 
@@ -28,7 +30,7 @@ class SecretsPluginSpec extends ProjectSpec {
     def 'Creates needed tasks'(String taskName, Class taskType) {
         given:
         assert !project.plugins.hasPlugin(PLUGIN_NAME)
-        assert !project.tasks.findByName(taskName)
+        assert !hasTask(project, taskName)
 
         when:
         project.plugins.apply(PLUGIN_NAME)
@@ -58,6 +60,16 @@ class SecretsPluginSpec extends ProjectSpec {
         where:
         extensionName | extensionType
         'secrets'     | SecretsPluginExtension
+    }
+
+    def hasTask(Project project, String taskName) {
+        try {
+            project.tasks.named(taskName)
+            return true
+        } catch(UnknownTaskException _) {
+            return false
+        }
+
     }
 
 }

@@ -16,17 +16,12 @@
 
 package wooga.gradle.secrets
 
-import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.logging.Logging
-import org.slf4j.Logger
 import wooga.gradle.secrets.internal.DefaultSecretsPluginExtension
 import wooga.gradle.secrets.tasks.FetchSecrets
 
 class SecretsPlugin implements Plugin<Project> {
-
-    static Logger logger = Logging.getLogger(SecretsPlugin)
 
     static String EXTENSION_NAME = "secrets"
 
@@ -34,25 +29,22 @@ class SecretsPlugin implements Plugin<Project> {
     void apply(Project project) {
         def extension = create_and_configure_extension(project)
 
-        def exampleTask = project.tasks.create("fetchSecrets", FetchSecrets)
-        exampleTask.group = "Secrets"
-        exampleTask.description = "Fetch configured secrets"
+        project.tasks.register("fetchSecrets", FetchSecrets) {task ->
+            task.group = "Secrets"
+            task.description = "Fetch configured secrets"
+        }
 
-        project.tasks.withType(FetchSecrets, new Action<FetchSecrets>() {
-            @Override
-            void execute(FetchSecrets t) {
-                t.secretsKey.convention(extension.secretsKey)
-                t.secretsFile.set(project.provider({
-                    project.layout.buildDirectory.dir("secret/${t.name}").get().file("secrets.yml")
-                }))
-                t.resolver.convention(extension.secretResolver)
-            }
-        })
+        project.tasks.withType(FetchSecrets).configureEach { task ->
+            task.secretsKey.convention(extension.secretsKey)
+            task.secretsFile.set(project.provider {
+                project.layout.buildDirectory.dir("secret/${task.name}").get().file("secrets.yml")
+            })
+            task.resolver.convention(extension.secretResolver)
+        }
     }
 
     protected static SecretsPluginExtension create_and_configure_extension(Project project) {
         def extension = project.extensions.create(SecretsPluginExtension, EXTENSION_NAME, DefaultSecretsPluginExtension, project)
-
         extension
     }
 }
