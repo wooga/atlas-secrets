@@ -15,7 +15,7 @@
  */
 
 plugins {
-    id 'net.wooga.plugins' version '2.0.0'
+    id 'net.wooga.plugins' version '2.1.1'
 }
 
 group 'net.wooga.gradle'
@@ -45,8 +45,7 @@ dependencies {
     }
 
     // https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/setup-project-gradle.html
-    implementation 'software.amazon.awssdk:secretsmanager:2.16.85'
+    implementation 'software.amazon.awssdk:secretsmanager:(2.16,3]'
     implementation "org.yaml:snakeyaml:1.26"
     implementation 'org.apache.commons:commons-text:1.8'
-    testImplementation 'com.github.stefanbirkner:system-rules:1.18.0'
 }
