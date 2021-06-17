@@ -41,11 +41,11 @@ class SecretsPlugin implements Plugin<Project> {
         project.tasks.withType(FetchSecrets, new Action<FetchSecrets>() {
             @Override
             void execute(FetchSecrets t) {
-                t.secretsKey.convention(extension.secretsKey)
+                t.secretsKey.set(extension.secretsKey)
                 t.secretsFile.set(project.provider({
                     project.layout.buildDirectory.dir("secret/${t.name}").get().file("secrets.yml")
                 }))
-                t.resolver.convention(extension.secretResolver)
+                t.resolver.set(extension.secretResolver)
             }
         })
     }
