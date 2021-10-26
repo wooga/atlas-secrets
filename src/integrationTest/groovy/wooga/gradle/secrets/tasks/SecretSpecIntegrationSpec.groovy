@@ -81,13 +81,13 @@ class SecretSpecIntegrationSpec extends IntegrationSpec {
 
         where:
         containerType                 | property         | type      | useSetter
-        FetchSecrets                  | "secretsKey"     | "key"     | false
-        FetchSecrets                  | "secretsKey"     | "key"     | true
-        FetchSecrets                  | "secretsKey.set" | "key"     | false
-        FetchSecrets                  | "secretsKey"     | "keyFile" | false
-        FetchSecrets                  | "secretsKey"     | "keyFile" | true
-        FetchSecrets                  | "secretsKey"     | "keyPath" | false
-        FetchSecrets                  | "secretsKey"     | "keyPath" | true
+        SecretsTask                   | "secretsKey"     | "key"     | false
+        SecretsTask                   | "secretsKey"     | "key"     | true
+        SecretsTask                   | "secretsKey.set" | "key"     | false
+        SecretsTask                   | "secretsKey"     | "keyFile" | false
+        SecretsTask                   | "secretsKey"     | "keyFile" | true
+        SecretsTask                   | "secretsKey"     | "keyPath" | false
+        SecretsTask                   | "secretsKey"     | "keyPath" | true
 
         DefaultSecretsPluginExtension | "secretsKey"     | "key"     | false
         DefaultSecretsPluginExtension | "secretsKey"     | "key"     | true
@@ -100,4 +100,8 @@ class SecretSpecIntegrationSpec extends IntegrationSpec {
         method = (useSetter) ? "set${property.capitalize()}" : property
         containerTypeName = Task.isAssignableFrom(containerType) ? "task" : "extension"
     }
+}
+
+class SecretsTaskTest extends SecretsTask {
+
 }
