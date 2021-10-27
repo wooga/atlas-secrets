@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Wooga GmbH
+ * Copyright 2020-2021 Wooga GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,5 @@
 
 package wooga.gradle.secrets
 
-import org.gradle.api.provider.Property
-
-interface SecretsPluginExtension extends SecretSpec {
-    Property<SecretResolver> getSecretResolver()
+trait SecretsPluginExtension extends SecretSpec {
 }

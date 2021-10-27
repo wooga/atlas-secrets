@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Wooga GmbH
+ * Copyright 2020-2021 Wooga GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,17 +17,43 @@
 package wooga.gradle.secrets
 
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Input
 
 import javax.crypto.spec.SecretKeySpec
 
-interface SecretSpec<T extends SecretSpec> {
+trait SecretSpec extends BaseSpec {
+    private final Property<SecretKeySpec> secretsKey = objects.property(SecretKeySpec)
 
-    Property<SecretKeySpec> getSecretsKey()
-    void setSecretsKey(SecretKeySpec key)
-    T setSecretsKey(String keyFile)
-    T setSecretsKey(File keyFile)
+    @Input
+    Property<SecretKeySpec> getSecretsKey() {
+        secretsKey
+    }
 
-    T secretsKey(SecretKeySpec key)
-    T secretsKey(String keyFile)
-    T secretsKey(File keyFile)
+    void setSecretsKey(Provider<SecretKeySpec> value) {
+        secretsKey.set(value)
+    }
+
+    void setSecretsKey(SecretKeySpec value) {
+        secretsKey.set(value)
+    }
+
+    void setSecretsKey(File keyFile) {
+        setSecretsKey(new SecretKeySpec(keyFile.bytes, "AES"))
+    }
+
+    private final Property<SecretResolver> secretResolver = objects.property(SecretResolver)
+
+    @Input
+    Property<SecretResolver> getSecretResolver() {
+        secretResolver
+    }
+
+    void setSecretResolver(Provider<SecretResolver> value) {
+        secretResolver.set(value)
+    }
+
+    void setSecretResolver(SecretResolver value) {
+        secretResolver.set(value)
+    }
 }
