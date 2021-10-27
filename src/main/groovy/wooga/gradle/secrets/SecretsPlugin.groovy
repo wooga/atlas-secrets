@@ -19,7 +19,7 @@ package wooga.gradle.secrets
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import wooga.gradle.secrets.internal.DefaultSecretsPluginExtension
-import wooga.gradle.secrets.tasks.FetchSecrets
+import wooga.gradle.secrets.tasks.SecretsTask
 
 class SecretsPlugin implements Plugin<Project> {
 
@@ -29,16 +29,8 @@ class SecretsPlugin implements Plugin<Project> {
     void apply(Project project) {
         def extension = create_and_configure_extension(project)
 
-        project.tasks.register("fetchSecrets", FetchSecrets) {task ->
-            task.group = "Secrets"
-            task.description = "Fetch configured secrets"
-        }
-
-        project.tasks.withType(FetchSecrets).configureEach { task ->
+        project.tasks.withType(SecretsTask).configureEach { task ->
             task.secretsKey.convention(extension.secretsKey)
-            task.secretsFile.set(project.provider {
-                project.layout.buildDirectory.dir("secret/${task.name}").get().file("secrets.yml")
-            })
             task.resolver.convention(extension.secretResolver)
         }
     }

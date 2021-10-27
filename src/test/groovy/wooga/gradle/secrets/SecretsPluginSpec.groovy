@@ -20,29 +20,10 @@ import nebula.test.ProjectSpec
 import org.gradle.api.Project
 import org.gradle.api.UnknownTaskException
 import spock.lang.Unroll
-import wooga.gradle.secrets.tasks.FetchSecrets
 
 class SecretsPluginSpec extends ProjectSpec {
 
     public static final String PLUGIN_NAME = 'net.wooga.secrets'
-
-    @Unroll("creates the task #taskName")
-    def 'Creates needed tasks'(String taskName, Class taskType) {
-        given:
-        assert !project.plugins.hasPlugin(PLUGIN_NAME)
-        assert !hasTask(project, taskName)
-
-        when:
-        project.plugins.apply(PLUGIN_NAME)
-
-        then:
-        def task = project.tasks.findByName(taskName)
-        taskType.isInstance(task)
-
-        where:
-        taskName       | taskType
-        "fetchSecrets" | FetchSecrets
-    }
 
     @Unroll
     def 'Creates the [#extensionName] extension with type #extensionType'() {
