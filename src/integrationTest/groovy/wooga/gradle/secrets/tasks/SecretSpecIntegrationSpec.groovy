@@ -16,12 +16,14 @@
 
 package wooga.gradle.secrets.tasks
 
+import com.wooga.gradle.test.IntegrationSpec
 import org.gradle.api.Task
 import spock.lang.Unroll
 
-import wooga.gradle.secrets.IntegrationSpec
 import wooga.gradle.secrets.internal.DefaultSecretsPluginExtension
 import wooga.gradle.secrets.internal.EncryptionSpecHelper
+
+import static com.wooga.gradle.test.SpecUtils.escapedPath
 
 class SecretSpecIntegrationSpec extends IntegrationSpec {
 
@@ -53,7 +55,7 @@ class SecretSpecIntegrationSpec extends IntegrationSpec {
             """.stripIndent()
         } else {
             buildFile << """
-                extensions.create('temp', ${containerType.name}, project)
+                extensions.create('temp', ${containerType.name})
                 temp.${method}(${value})
             """.stripIndent()
         }
@@ -86,16 +88,12 @@ class SecretSpecIntegrationSpec extends IntegrationSpec {
         SecretsTask                   | "secretsKey.set" | "key"     | false
         SecretsTask                   | "secretsKey"     | "keyFile" | false
         SecretsTask                   | "secretsKey"     | "keyFile" | true
-        SecretsTask                   | "secretsKey"     | "keyPath" | false
-        SecretsTask                   | "secretsKey"     | "keyPath" | true
 
         DefaultSecretsPluginExtension | "secretsKey"     | "key"     | false
         DefaultSecretsPluginExtension | "secretsKey"     | "key"     | true
         DefaultSecretsPluginExtension | "secretsKey.set" | "key"     | false
         DefaultSecretsPluginExtension | "secretsKey"     | "keyFile" | false
         DefaultSecretsPluginExtension | "secretsKey"     | "keyFile" | true
-        DefaultSecretsPluginExtension | "secretsKey"     | "keyPath" | false
-        DefaultSecretsPluginExtension | "secretsKey"     | "keyPath" | true
 
         method = (useSetter) ? "set${property.capitalize()}" : property
         containerTypeName = Task.isAssignableFrom(containerType) ? "task" : "extension"

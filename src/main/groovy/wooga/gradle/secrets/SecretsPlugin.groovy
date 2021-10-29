@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Wooga GmbH
+ * Copyright 2020-2021 Wooga GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,17 @@
 
 package wooga.gradle.secrets
 
+import org.apache.commons.lang3.RandomStringUtils
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import wooga.gradle.secrets.internal.DefaultSecretsPluginExtension
 import wooga.gradle.secrets.tasks.SecretsTask
+
+import javax.crypto.SecretKeyFactory
+import javax.crypto.spec.PBEKeySpec
+import javax.crypto.spec.SecretKeySpec
+import java.security.SecureRandom
+import java.security.spec.KeySpec
 
 class SecretsPlugin implements Plugin<Project> {
 
@@ -36,7 +43,26 @@ class SecretsPlugin implements Plugin<Project> {
     }
 
     protected static SecretsPluginExtension create_and_configure_extension(Project project) {
-        def extension = project.extensions.create(SecretsPluginExtension, EXTENSION_NAME, DefaultSecretsPluginExtension, project)
+        def extension = project.extensions.create(SecretsPluginExtension, EXTENSION_NAME, DefaultSecretsPluginExtension)
+        extension.secretsKey.convention(SecretsConsts.SECRETS_KEY.getFileValueProvider(project).map({new SecretKeySpec(it.asFile.bytes, "AES")}).orElse(project.provider({
+            KeySpec spec = new PBEKeySpec(secretsKeyPassword().chars, secretsKeySalt(), SecretsConsts.SECRETS_KEY_ITERATION, SecretsConsts.SECRETS_KEY_LENGTH);
+            // AES-256
+            SecretKeyFactory f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+            byte[] key = f.generateSecret(spec).getEncoded();
+            return new SecretKeySpec(key, "AES");
+        }.memoize())))
+
         extension
+    }
+
+    protected static String secretsKeyPassword() {
+        RandomStringUtils.random(20)
+    }
+
+    protected static byte[] secretsKeySalt() {
+        SecureRandom random = new SecureRandom()
+        byte[] salt = new byte[16]
+        random.nextBytes(salt)
+        salt
     }
 }

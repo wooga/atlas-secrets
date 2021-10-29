@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Wooga GmbH
+ * Copyright 2020-2021 Wooga GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,20 @@
 
 package wooga.gradle.secrets
 
+import com.wooga.gradle.PropertyLookup
+import org.apache.commons.lang3.RandomStringUtils
+
+import javax.crypto.SecretKeyFactory
+import javax.crypto.spec.PBEKeySpec
+import javax.crypto.spec.SecretKeySpec
+import java.security.SecureRandom
+import java.security.spec.KeySpec
+
 class SecretsConsts {
     static Integer SECRETS_KEY_ITERATION = 65536
     static Integer SECRETS_KEY_LENGTH = 256
+
+    static PropertyLookup SECRETS_KEY = new PropertyLookup(SECRETS_KEY_ENV_VAR, SECRETS_KEY_OPTION, null)
 
     static String SECRETS_KEY_OPTION = "secrets.secretsKey"
     static String SECRETS_KEY_ENV_VAR = "SECRETS_SECRETS_KEY"
