@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2021 Wooga GmbH
+ * Copyright 2021 Wooga GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,24 +16,23 @@
 
 package wooga.gradle.secrets
 
-import org.gradle.api.Action
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.util.ConfigureUtil
-import wooga.gradle.secrets.internal.SecretResolverChain
+import org.gradle.api.tasks.Input
 
-trait SecretsPluginExtension extends SecretSpec {
+trait SecretResolverSpec extends BaseSpec {
+    private final Property<SecretResolver> resolver = objects.property(SecretResolver)
 
-    abstract SecretResolverChain getSecretResolverChain()
-
-    Provider<SecretResolverChain> getSecretResolver() {
-        providerFactory.provider({ secretResolverChain })
+    @Input
+    Property<SecretResolver> getResolver() {
+        resolver
     }
 
-    void secretResolverChain(Action<SecretResolverChain> action) {
-        action.execute(secretResolverChain)
+    void setResolver(Provider<SecretResolver> value) {
+        resolver.set(value)
     }
 
-    void secretResolverChain(Closure configure) {
-        secretResolverChain(ConfigureUtil.configureUsing(configure))
+    void setResolver(SecretResolver value) {
+        resolver.set(value)
     }
 }

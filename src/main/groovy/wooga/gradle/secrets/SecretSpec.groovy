@@ -41,19 +41,4 @@ trait SecretSpec extends BaseSpec {
     void setSecretsKey(File keyFile) {
         setSecretsKey(new SecretKeySpec(keyFile.bytes, "AES"))
     }
-
-    private final Property<SecretResolver> secretResolver = objects.property(SecretResolver)
-
-    @Input
-    Property<SecretResolver> getSecretResolver() {
-        secretResolver
-    }
-
-    void setSecretResolver(Provider<SecretResolver> value) {
-        secretResolver.set(value)
-    }
-
-    void setSecretResolver(SecretResolver value) {
-        secretResolver.set(value)
-    }
 }

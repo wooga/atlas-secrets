@@ -24,15 +24,21 @@ class EnvironmentResolver implements SecretResolver {
     @Override
     Secret resolve(String secretId) {
         String secret = System.getenv(secretId.toUpperCase())
-        if(!secret) {
+        if (!secret) {
             throw new SecretResolverException("Unable to resolve secret with id ${secretId}")
         }
 
         def f = new File(secret)
-        if(f.exists()) {
+        if (f.exists()) {
             return new DefaultSecret(f.bytes)
         }
 
         new DefaultSecret(secret)
+    }
+
+
+    @Override
+    String toString() {
+        "EnvironmentResolver"
     }
 }

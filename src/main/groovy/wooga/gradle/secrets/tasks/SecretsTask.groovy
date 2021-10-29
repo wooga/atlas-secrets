@@ -17,7 +17,8 @@
 package wooga.gradle.secrets.tasks
 
 import org.gradle.api.DefaultTask
+import wooga.gradle.secrets.SecretResolverSpec
 import wooga.gradle.secrets.SecretSpec
 
-abstract class SecretsTask extends DefaultTask implements SecretSpec {
+abstract class SecretsTask extends DefaultTask implements SecretSpec, SecretResolverSpec {
 }
