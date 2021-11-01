@@ -21,8 +21,9 @@ import org.gradle.api.Action
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.util.ConfigureUtil
-import java.util.logging.Logger
 import wooga.gradle.secrets.internal.SecretResolverChain
+
+import java.util.logging.Logger
 
 trait SecretsPluginExtension extends SecretSpec {
 
@@ -44,6 +45,10 @@ trait SecretsPluginExtension extends SecretSpec {
 
     void secretResolverChain(Closure configure) {
         secretResolverChain(ConfigureUtil.configureUsing(configure))
+    }
+
+    void setSecretResolver(SecretResolver resolver) {
+        secretResolverChain.setResolverChain(resolver)
     }
 
     Provider<String> secretValue(String secretId) {
