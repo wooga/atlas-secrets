@@ -17,6 +17,6 @@
 package wooga.gradle.secrets
 
 interface SecretResolver<T> {
-    Secret<T> resolve(String secretId)
+    Secret<T> resolve(String secretId) throws SecretResolverException
 }
 

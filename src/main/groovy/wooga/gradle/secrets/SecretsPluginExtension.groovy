@@ -16,12 +16,21 @@
 
 package wooga.gradle.secrets
 
+import org.apache.commons.lang3.RandomStringUtils
 import org.gradle.api.Action
+import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.util.ConfigureUtil
+import java.util.logging.Logger
 import wooga.gradle.secrets.internal.SecretResolverChain
 
 trait SecretsPluginExtension extends SecretSpec {
+
+    static Logger LOGGER = Logger.getLogger(SecretsPluginExtension.class.getName());
+
+    Logger getLogger() {
+        LOGGER
+    }
 
     abstract SecretResolverChain getSecretResolverChain()
 
@@ -35,5 +44,46 @@ trait SecretsPluginExtension extends SecretSpec {
 
     void secretResolverChain(Closure configure) {
         secretResolverChain(ConfigureUtil.configureUsing(configure))
+    }
+
+    Provider<String> secretValue(String secretId) {
+        secretResolver.map({ SecretResolver resolver ->
+            try {
+                def resolvedValue = resolver.resolve(secretId).getSecretValue()
+                if (!String.isInstance(resolvedValue)) {
+                    logger.warning("Secret with secretId '${secretId}' is not of type String")
+                    return null
+                }
+                resolvedValue as String
+            } catch (SecretResolverException e) {
+                logger.warning(e.message)
+                return null
+            }
+        })
+    }
+
+    Provider<byte[]> secretFileAsBytes(String secretId) {
+        secretResolver.map({ SecretResolver resolver ->
+            try {
+                def resolvedValue = resolver.resolve(secretId).getSecretValue()
+                if (String.isInstance(resolvedValue)) {
+                    logger.warning("Secret with secretId '${secretId}' is not of type byte[]")
+                    return null
+                }
+                resolvedValue as byte[]
+            } catch (SecretResolverException e) {
+                logger.warning(e.message)
+                return null
+            }
+        })
+    }
+
+    Provider<RegularFile> secretFile(String secretId) {
+        layout.file(secretFileAsBytes(secretId).map({
+            File tempFile = File.createTempFile(RandomStringUtils.random(10, true, true), RandomStringUtils.random(10, true, true))
+            tempFile.deleteOnExit()
+            tempFile.bytes = it
+            tempFile
+        }))
     }
 }

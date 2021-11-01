@@ -20,6 +20,7 @@ import com.wooga.gradle.test.ConventionSource
 import com.wooga.gradle.test.PropertyLocation
 import com.wooga.gradle.test.PropertyQueryTaskWriter
 import spock.lang.Unroll
+import wooga.gradle.secrets.internal.DefaultResolver
 import wooga.gradle.secrets.internal.EnvironmentResolver
 import wooga.gradle.secrets.internal.SecretResolverChain
 import wooga.gradle.secrets.tasks.SecretsTask
@@ -149,6 +150,26 @@ class SecretsPluginIntegrationSpec extends SecretsIntegrationSpec {
         where:
         property         | expectedValue
         "secretResolver" | new SecretResolverChain([new EnvironmentResolver()]).toString()
+    }
+
+    def "extension resolves secrets wrapped in provider"() {
+        given: "a resolver chain with a default resolver configured"
+        buildFile << """
+        secrets.secretResolverChain {
+            add(new ${DefaultResolver.class.name}({ String secretId ->
+                switch(secretId) {
+                    case "secretString":
+                        return "a secret value"
+                    break
+                    case "secretFile":
+                        return "a secret value".bytes
+                    break
+                }
+            }))
+        }
+        """.stripIndent()
+
+
     }
 
 }
