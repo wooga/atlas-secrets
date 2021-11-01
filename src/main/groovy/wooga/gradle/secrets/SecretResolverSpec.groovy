@@ -19,11 +19,12 @@ package wooga.gradle.secrets
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 
 trait SecretResolverSpec extends BaseSpec {
     private final Property<SecretResolver> resolver = objects.property(SecretResolver)
 
-    @Input
+    @Internal
     Property<SecretResolver> getResolver() {
         resolver
     }

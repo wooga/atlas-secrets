@@ -19,6 +19,7 @@ package wooga.gradle.secrets
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 
 import javax.crypto.spec.SecretKeySpec
 
@@ -26,6 +27,7 @@ trait SecretSpec extends BaseSpec {
     private final Property<SecretKeySpec> secretsKey = objects.property(SecretKeySpec)
 
     @Input
+    @Optional
     Property<SecretKeySpec> getSecretsKey() {
         secretsKey
     }
