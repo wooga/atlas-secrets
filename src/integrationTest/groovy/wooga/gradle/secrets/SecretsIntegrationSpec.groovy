@@ -17,6 +17,8 @@
 package wooga.gradle.secrets
 
 import com.wooga.gradle.test.IntegrationSpec
+import wooga.gradle.secrets.internal.DefaultResolver
+import wooga.gradle.secrets.internal.EnvironmentResolver
 import wooga.gradle.secrets.tasks.SecretsTask
 
 class SecretsIntegrationSpec extends IntegrationSpec {
@@ -55,7 +57,9 @@ class SecretsIntegrationSpec extends IntegrationSpec {
                 return createSecretTempFilePath(rawValue as byte[])
 
             case "DefaultResolver":
-                return "new wooga.gradle.secrets.internal.DefaultResolver(${wrapValueBasedOnType(rawValue, "Closure<String>", fallback)})"
+                return "new ${DefaultResolver.class.name}(${wrapValueBasedOnType(rawValue, "Closure<String>", fallback)})"
+            case "EnvironmentResolver":
+                return "new ${EnvironmentResolver.class.name}()"
             default:
                 return rawValue.toString()
         }

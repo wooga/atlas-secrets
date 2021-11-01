@@ -108,14 +108,15 @@ class SecretsPluginIntegrationSpec extends SecretsIntegrationSpec {
         query.matches(result, testValue)
 
         where:
-        property         | method                  | rawValue         | expectedValue                        | type                       | location                     | propertyInvocation
-        "secretsKey"     | _                       | _                | "a generated SecretKeySpec"          | _                          | PropertyLocation.none        | ".map({'${expectedValue}'}).getOrNull()"
-        "secretsKey"     | _                       | "18273645".bytes | _                                    | "SecretKeySpecFilePathRaw" | PropertyLocation.environment | ".map({it.getEncoded()}).getOrNull()"
-        "secretsKey"     | _                       | "81726354".bytes | _                                    | "SecretKeySpecFilePathRaw" | PropertyLocation.property    | ".map({it.getEncoded()}).getOrNull()"
-        "secretsKey"     | toSetter(property)      | "12348765".bytes | _                                    | "SecretKeySpecFile"        | PropertyLocation.script      | ".map({it.getEncoded()}).getOrNull()"
-        "secretsKey"     | toProviderSet(property) | "87654321".bytes | _                                    | "Provider<SecretKeySpec>"  | PropertyLocation.script      | ".map({it.getEncoded()}).getOrNull()"
-        "secretsKey"     | toProviderSet(property) | "12345678".bytes | _                                    | "SecretKeySpec"            | PropertyLocation.script      | ".map({it.getEncoded()}).getOrNull()"
-        "secretResolver" | _                       | _                | new SecretResolverChain().toString() | _                          | PropertyLocation.none        | _
+        property         | method                  | rawValue         | expectedValue                                                   | type                       | location                     | propertyInvocation
+        "secretsKey"     | _                       | _                | "a generated SecretKeySpec"                                     | _                          | PropertyLocation.none        | ".map({'${expectedValue}'}).getOrNull()"
+        "secretsKey"     | _                       | "18273645".bytes | _                                                               | "SecretKeySpecFilePathRaw" | PropertyLocation.environment | ".map({it.getEncoded()}).getOrNull()"
+        "secretsKey"     | _                       | "81726354".bytes | _                                                               | "SecretKeySpecFilePathRaw" | PropertyLocation.property    | ".map({it.getEncoded()}).getOrNull()"
+        "secretsKey"     | toSetter(property)      | "12348765".bytes | _                                                               | "SecretKeySpecFile"        | PropertyLocation.script      | ".map({it.getEncoded()}).getOrNull()"
+        "secretsKey"     | toProviderSet(property) | "87654321".bytes | _                                                               | "Provider<SecretKeySpec>"  | PropertyLocation.script      | ".map({it.getEncoded()}).getOrNull()"
+        "secretsKey"     | toProviderSet(property) | "12345678".bytes | _                                                               | "SecretKeySpec"            | PropertyLocation.script      | ".map({it.getEncoded()}).getOrNull()"
+        "secretResolver" | _                       | _                | new SecretResolverChain().toString()                            | _                          | PropertyLocation.none        | _
+        "secretResolver" | toSetter(property)      | _                | new SecretResolverChain([new EnvironmentResolver()]).toString() | "EnvironmentResolver"      | PropertyLocation.script      | _
 
         value = (type != _) ? wrapValueBasedOnType(rawValue, type.toString(), wrapValueFallback) : rawValue
         pInvocation = (propertyInvocation != _) ? propertyInvocation : ".getOrNull().toString()"
