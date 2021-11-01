@@ -53,6 +53,9 @@ class SecretsIntegrationSpec extends IntegrationSpec {
 
             case "SecretKeySpecFilePathRaw":
                 return createSecretTempFilePath(rawValue as byte[])
+
+            case "DefaultResolver":
+                return "new wooga.gradle.secrets.internal.DefaultResolver(${wrapValueBasedOnType(rawValue, "Closure<String>", fallback)})"
             default:
                 return rawValue.toString()
         }

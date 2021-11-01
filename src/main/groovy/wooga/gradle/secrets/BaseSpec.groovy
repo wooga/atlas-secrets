@@ -19,23 +19,22 @@ package wooga.gradle.secrets
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ProviderFactory
-import org.gradle.internal.impldep.org.eclipse.jgit.errors.NotSupportedException
 
 import javax.inject.Inject
 
 trait BaseSpec {
     @Inject
     ProjectLayout getLayout() {
-        throw new NotSupportedException("ProjectLayout is supposed to be injected here by gradle")
+        throw new Exception("ProjectLayout is supposed to be injected here by gradle")
     }
 
     @Inject
     ProviderFactory getProviderFactory() {
-        throw new NotSupportedException("")
+        throw new Exception("ProviderFactory is supposed to be injected here by gradle")
     }
 
     @Inject
     ObjectFactory getObjects() {
-        throw new NotSupportedException("")
+        throw new Exception("ObjectFactory is supposed to be injected here by gradle")
     }
 }

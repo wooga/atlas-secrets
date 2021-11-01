@@ -20,4 +20,5 @@ package wooga.gradle.secrets.internal
 import wooga.gradle.secrets.SecretsPluginExtension
 
 class DefaultSecretsPluginExtension implements SecretsPluginExtension {
+    final SecretResolverChain secretResolverChain = new SecretResolverChain()
 }

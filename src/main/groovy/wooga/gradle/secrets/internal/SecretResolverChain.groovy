@@ -45,26 +45,34 @@ class SecretResolverChain implements SecretResolver, List<SecretResolver> {
 
     @Override
     Secret<?> resolve(String secretId) {
-        if(empty) {
+        if (empty) {
             throw new SecretResolverException("No secret resolvers configured.")
         }
 
         Secret secret = null
 
-        for(SecretResolver resolver in resolverChain) {
+        for (SecretResolver resolver in resolverChain) {
             try {
                 secret = resolver.resolve(secretId)
-                if(secret) {
+                if (secret) {
                     break
                 }
             }
-            catch(SecretResolverException ignored) {}
+            catch (SecretResolverException ignored) {
+            }
         }
 
-        if(!secret) {
+        if (!secret) {
             throw new SecretResolverException("Unable to resolve secret with id ${secretId}")
         }
 
         secret
+    }
+
+    @Override
+    String toString() {
+        "SecretResolverChain{" +
+                "resolverChain=" + resolverChain +
+                '}'
     }
 }

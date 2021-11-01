@@ -20,6 +20,7 @@ import org.apache.commons.lang3.RandomStringUtils
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import wooga.gradle.secrets.internal.DefaultSecretsPluginExtension
+import wooga.gradle.secrets.internal.EnvironmentResolver
 import wooga.gradle.secrets.tasks.SecretsTask
 
 import javax.crypto.SecretKeyFactory
@@ -44,7 +45,7 @@ class SecretsPlugin implements Plugin<Project> {
 
     protected static SecretsPluginExtension create_and_configure_extension(Project project) {
         def extension = project.extensions.create(SecretsPluginExtension, EXTENSION_NAME, DefaultSecretsPluginExtension)
-        extension.secretsKey.convention(SecretsConsts.SECRETS_KEY.getFileValueProvider(project).map({new SecretKeySpec(it.asFile.bytes, "AES")}).orElse(project.provider({
+        extension.secretsKey.convention(SecretsConsts.SECRETS_KEY.getFileValueProvider(project).map({ new SecretKeySpec(it.asFile.bytes, "AES") }).orElse(project.provider({
             KeySpec spec = new PBEKeySpec(secretsKeyPassword().chars, secretsKeySalt(), SecretsConsts.SECRETS_KEY_ITERATION, SecretsConsts.SECRETS_KEY_LENGTH);
             // AES-256
             SecretKeyFactory f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
