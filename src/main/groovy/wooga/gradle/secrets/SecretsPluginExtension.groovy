@@ -25,7 +25,7 @@ import wooga.gradle.secrets.internal.SecretResolverChain
 
 import java.util.logging.Logger
 
-trait SecretsPluginExtension extends SecretSpec {
+trait SecretsPluginExtension implements SecretSpec, SecretResolverFactory {
 
     static Logger LOGGER = Logger.getLogger(SecretsPluginExtension.class.getName());
 
@@ -91,4 +91,5 @@ trait SecretsPluginExtension extends SecretSpec {
             tempFile
         }))
     }
+
 }
