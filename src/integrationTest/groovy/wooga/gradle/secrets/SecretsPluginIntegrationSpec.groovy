@@ -169,8 +169,6 @@ class SecretsPluginIntegrationSpec extends SecretsIntegrationSpec {
             }))
         }
         """.stripIndent()
-
-
     }
 
 }

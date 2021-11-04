@@ -17,6 +17,11 @@
 package wooga.gradle.secrets
 
 import nebula.test.ProjectSpec
+import org.junit.Rule
+import org.junit.contrib.java.lang.system.EnvironmentVariables
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider
+import software.amazon.awssdk.profiles.ProfileFile
+import software.amazon.awssdk.regions.Region
 import wooga.gradle.secrets.internal.DefaultSecret
 
 class SecretsPluginExtensionSpec extends ProjectSpec {
@@ -24,6 +29,9 @@ class SecretsPluginExtensionSpec extends ProjectSpec {
 
     SecretsPluginExtension subjectUnderTest
     def resolver = Mock(SecretResolver)
+
+    @Rule
+    EnvironmentVariables environmentVariables
 
     def setup() {
         project.plugins.apply(PLUGIN_NAME)
@@ -156,4 +164,143 @@ class SecretsPluginExtensionSpec extends ProjectSpec {
         noExceptionThrown()
         !present
     }
+
+    def "security resolver factory method awsSecretResolver with region creates resolver"() {
+        when:
+        def resolver = subjectUnderTest.awsSecretResolver(Region.US_EAST_1)
+
+        then:
+        resolver != null
+        SecretResolver.class.isAssignableFrom(resolver.class)
+    }
+
+    def "security resolver factory method awsSecretResolver with profileName and region creates resolver"() {
+        when:
+        def resolver = subjectUnderTest.awsSecretResolver("some_profile", Region.US_EAST_1)
+
+        then:
+        resolver != null
+        SecretResolver.class.isAssignableFrom(resolver.class)
+    }
+
+    def "security resolver factory method awsSecretResolver with credentials provider and region creates resolver"() {
+        when:
+        def resolver = subjectUnderTest.awsSecretResolver(DefaultCredentialsProvider.builder().build(), Region.US_EAST_1)
+
+        then:
+        resolver != null
+        SecretResolver.class.isAssignableFrom(resolver.class)
+    }
+
+    def "security resolver factory method environmentResolver creates resolver"() {
+        when:
+        def resolver = subjectUnderTest.environmentResolver()
+
+        then:
+        resolver != null
+        SecretResolver.class.isAssignableFrom(resolver.class)
+
+    }
+
+    def "security resolver factory method chainResolver creates resolver"() {
+        when:
+        def resolver = subjectUnderTest.chainResolver()
+
+        then:
+        resolver != null
+        SecretResolver.class.isAssignableFrom(resolver.class)
+
+    }
+
+    def "security resolver factory method chainResolver with provided resolvers creates resolver"() {
+        when:
+        def resolver = subjectUnderTest.chainResolver(subjectUnderTest.environmentResolver(), subjectUnderTest.awsSecretResolver(Region.CN_NORTH_1))
+
+        then:
+        resolver != null
+        SecretResolver.class.isAssignableFrom(resolver.class)
+    }
+
+    def "method awsCredentialsProvider creates AwsCredentialsProvider with profileName and profileFile"() {
+        given: "a custom aws profile file"
+        def credentialsFile = File.createTempFile("some", "awsprofile")
+        credentialsFile << """
+        [default]
+        aws_access_key_id        = AKIAIOSFODNN7EXAMPLE
+        aws_secret_access_key    = wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+
+        [${awsProfileName}]
+        aws_access_key_id        = ${accessKeyId} 
+        aws_secret_access_key    = ${awsSecretAccessKey}
+        
+        """.stripIndent()
+
+        def p = ProfileFile.builder().content(credentialsFile.toPath()).type(ProfileFile.Type.CREDENTIALS).build()
+        def profile = ProfileFile.aggregator().addFile(p).build()
+
+        and: "a clean aws environment"
+        environmentVariables.clear(
+                "AWS_ACCESS_KEY_ID",
+                "AWS_SECRET_ACCESS_KEY",
+                "AWS_SESSION_TOKEN",
+                "AWS_CA_Bundle",
+                "AWS_CONFIG_FILE",
+                "AWS_SHARED_CREDENTIALS_FILE")
+
+        when:
+        def credentials = subjectUnderTest.awsCredentialsProvider(awsProfileName, profile)
+
+        then:
+        credentials != null
+        def c = credentials.resolveCredentials()
+        c.accessKeyId() == accessKeyId
+        c.secretAccessKey() == awsSecretAccessKey
+
+        where:
+        accessKeyId = 'AKIAIOSFODNN8EXAMPLE'
+        awsSecretAccessKey = 'wJalrXUtnFEMI/K7MDENG/bPyRfiCYEXAMPLEKEY'
+        awsProfileName = 'someProfile'
+    }
+
+    def "method awsCredentialsProvider creates AwsCredentialsProvider with profileName"() {
+        given: "a custom credentials file"
+        def credentialsFile = File.createTempFile("some", "awsprofile")
+        credentialsFile << """
+        [default]
+        aws_access_key_id        = AKIAIOSFODNN7EXAMPLE
+        aws_secret_access_key    = wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+
+        [${awsProfileName}]
+        aws_access_key_id        = ${accessKeyId} 
+        aws_secret_access_key    = ${awsSecretAccessKey}
+        
+        """.stripIndent()
+
+        and: "a clean aws environment"
+        environmentVariables.clear(
+                "AWS_ACCESS_KEY_ID",
+                "AWS_SECRET_ACCESS_KEY",
+                "AWS_SESSION_TOKEN",
+                "AWS_CA_Bundle",
+                "AWS_CONFIG_FILE",
+                "AWS_SHARED_CREDENTIALS_FILE")
+
+        and: "a new environment value to point to our custom credentials file"
+        environmentVariables.set("AWS_SHARED_CREDENTIALS_FILE", credentialsFile.absolutePath)
+
+        when:
+        def credentials = subjectUnderTest.awsCredentialsProvider(awsProfileName)
+
+        then:
+        credentials != null
+        def c = credentials.resolveCredentials()
+        c.accessKeyId() == accessKeyId
+        c.secretAccessKey() == awsSecretAccessKey
+
+        where:
+        accessKeyId = 'AKIAIOSFODNN8EXAMPLE'
+        awsSecretAccessKey = 'wJalrXUtnFEMI/K7MDENG/bPyRfiCYEXAMPLEKEY'
+        awsProfileName = 'someProfile'
+    }
+
 }

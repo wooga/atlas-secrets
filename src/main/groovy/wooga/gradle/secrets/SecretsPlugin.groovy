@@ -20,7 +20,6 @@ import org.apache.commons.lang3.RandomStringUtils
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import wooga.gradle.secrets.internal.DefaultSecretsPluginExtension
-import wooga.gradle.secrets.internal.EnvironmentResolver
 import wooga.gradle.secrets.tasks.SecretsTask
 
 import javax.crypto.SecretKeyFactory
