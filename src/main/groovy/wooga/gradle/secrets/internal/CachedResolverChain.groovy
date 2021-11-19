@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Wooga GmbH
+ * Copyright 2021 Wooga GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@
 
 package wooga.gradle.secrets.internal
 
+import groovy.transform.InheritConstructors
+import wooga.gradle.secrets.SecretResolver
 
-import wooga.gradle.secrets.SecretsPluginExtension
-
-class DefaultSecretsPluginExtension implements SecretsPluginExtension {
-    final SecretsCache secretResolverChain = new SecretsCache(new SecretResolverChain())
+@InheritConstructors
+class CachedSecretResolverChain extends SecretsCache<SecretResolverChain> implements List<SecretResolver> {
 }

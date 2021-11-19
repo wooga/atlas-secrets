@@ -19,6 +19,7 @@ package wooga.gradle.secrets
 import org.apache.commons.lang3.RandomStringUtils
 import org.gradle.api.Action
 import org.gradle.api.file.RegularFile
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.util.ConfigureUtil
 import wooga.gradle.secrets.internal.SecretResolverChain
@@ -31,6 +32,34 @@ trait SecretsPluginExtension implements SecretSpec, SecretResolverFactory {
 
     Logger getLogger() {
         LOGGER
+    }
+
+    private final Property<Boolean> cacheSecrets = objects.property(Boolean)
+
+    Property<Boolean> getCacheSecrets() {
+        cacheSecrets
+    }
+
+    void setCacheSecrets(Provider<Boolean> value) {
+        cacheSecrets.set(value)
+    }
+
+    void setCacheSecrets(Boolean value) {
+        cacheSecrets.set(value)
+    }
+
+    private final Property<Integer> secretCacheTimeout = objects.property(Integer)
+
+    Property<Integer> getSecretCacheTimeout() {
+        secretCacheTimeout
+    }
+
+    void setSecretCacheTimeout(Provider<Integer> value) {
+        secretCacheTimeout.set(value)
+    }
+
+    void setSecretCacheTimeout(Integer value) {
+        secretCacheTimeout.set(value)
     }
 
     abstract SecretResolverChain getSecretResolverChain()
