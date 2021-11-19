@@ -51,7 +51,13 @@ trait SecretsPluginExtension implements SecretSpec, SecretResolverFactory {
         secretResolverChain.setResolverChain(resolver)
     }
 
+
+    @Deprecated
     Provider<String> secretValue(String secretId) {
+       secretText(secretId)
+    }
+
+    Provider<String> secretText(String secretId) {
         secretResolver.map({ SecretResolver resolver ->
             try {
                 def resolvedValue = resolver.resolve(secretId).getSecretValue()

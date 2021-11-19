@@ -19,8 +19,9 @@ package wooga.gradle.secrets.internal
 import wooga.gradle.secrets.Secret
 import wooga.gradle.secrets.SecretResolver
 import wooga.gradle.secrets.SecretResolverException
+import wooga.gradle.secrets.SecretResolverFactory
 
-class SecretResolverChain implements SecretResolver, List<SecretResolver> {
+class SecretResolverChain implements SecretResolver, List<SecretResolver>, SecretResolverFactory {
 
     @Delegate
     private final List<SecretResolver> resolverChain

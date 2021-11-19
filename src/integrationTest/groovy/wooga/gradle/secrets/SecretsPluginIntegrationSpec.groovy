@@ -153,6 +153,32 @@ class SecretsPluginIntegrationSpec extends SecretsIntegrationSpec {
         "secretResolver" | new SecretResolverChain([new EnvironmentResolver()]).toString()
     }
 
+    def "extension allows to configure resolvers in secretResolverChain with closure and factory methods"() {
+        given: "an empty resolverChain"
+        buildFile << """
+        secrets.secretResolverChain.clear()
+        """.stripIndent()
+
+        and: "configuring a new resolver"
+        buildFile << """
+        secrets.secretResolverChain {
+            add(environmentResolver())
+        }
+        """.stripIndent()
+
+        when:
+        def query = new PropertyQueryTaskWriter("${extensionName}.${property}", ".getOrNull().toString()")
+        query.write(buildFile)
+        def result = runTasksSuccessfully(query.taskName)
+
+        then:
+        query.matches(result, expectedValue)
+
+        where:
+        property         | expectedValue
+        "secretResolver" | new SecretResolverChain([new EnvironmentResolver()]).toString()
+    }
+
     def "extension resolves secrets wrapped in provider"() {
         given: "a resolver chain with a default resolver configured"
         buildFile << """

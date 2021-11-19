@@ -174,6 +174,15 @@ class SecretsPluginExtensionSpec extends ProjectSpec {
         SecretResolver.class.isAssignableFrom(resolver.class)
     }
 
+    def "security resolver factory method awsSecretResolver with region as String creates resolver"() {
+        when:
+        def resolver = subjectUnderTest.awsSecretResolver(Region.US_EAST_1.id())
+
+        then:
+        resolver != null
+        SecretResolver.class.isAssignableFrom(resolver.class)
+    }
+
     def "security resolver factory method awsSecretResolver with profileName and region creates resolver"() {
         when:
         def resolver = subjectUnderTest.awsSecretResolver("some_profile", Region.US_EAST_1)
@@ -183,9 +192,38 @@ class SecretsPluginExtensionSpec extends ProjectSpec {
         SecretResolver.class.isAssignableFrom(resolver.class)
     }
 
+    def "security resolver factory method awsSecretResolver with profileName and region as String creates resolver"() {
+        when:
+        def resolver = subjectUnderTest.awsSecretResolver("some_profile", Region.US_EAST_1.id())
+
+        then:
+        resolver != null
+        SecretResolver.class.isAssignableFrom(resolver.class)
+    }
+
     def "security resolver factory method awsSecretResolver with credentials provider and region creates resolver"() {
         when:
         def resolver = subjectUnderTest.awsSecretResolver(DefaultCredentialsProvider.builder().build(), Region.US_EAST_1)
+
+        then:
+        resolver != null
+        SecretResolver.class.isAssignableFrom(resolver.class)
+    }
+
+    def "security resolver factory method awsSecretResolver without arguments creates resolver"() {
+        given: "an aws region configured (Otherwise aws raises an exception)"
+        environmentVariables.set("AWS_REGION", Region.US_EAST_1.id())
+        when:
+        def resolver = subjectUnderTest.awsSecretResolver()
+
+        then:
+        resolver != null
+        SecretResolver.class.isAssignableFrom(resolver.class)
+    }
+
+    def "security resolver factory method awsSecretResolver with credentials provider and region as String creates resolver"() {
+        when:
+        def resolver = subjectUnderTest.awsSecretResolver(DefaultCredentialsProvider.builder().build(), Region.US_EAST_1.id())
 
         then:
         resolver != null
