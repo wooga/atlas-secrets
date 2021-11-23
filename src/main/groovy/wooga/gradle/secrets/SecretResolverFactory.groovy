@@ -29,12 +29,28 @@ trait SecretResolverFactory {
         new AWSSecretsManagerResolver(credentials, region)
     }
 
+    SecretResolver awsSecretResolver(AwsCredentialsProvider credentials, String region) {
+        new AWSSecretsManagerResolver(credentials, Region.of(region))
+    }
+
     SecretResolver awsSecretResolver(String profileName, Region region) {
         new AWSSecretsManagerResolver(awsCredentialsProvider(profileName), region)
     }
 
+    SecretResolver awsSecretResolver(String profileName, String region) {
+        new AWSSecretsManagerResolver(awsCredentialsProvider(profileName), Region.of(region))
+    }
+
     SecretResolver awsSecretResolver(Region region) {
         new AWSSecretsManagerResolver(region)
+    }
+
+    SecretResolver awsSecretResolver(String region) {
+        new AWSSecretsManagerResolver(Region.of(region))
+    }
+
+    SecretResolver awsSecretResolver() {
+        new AWSSecretsManagerResolver()
     }
 
     SecretResolver environmentResolver() {

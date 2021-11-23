@@ -42,6 +42,10 @@ class AWSSecretsManagerResolver implements SecretResolver {
         this(SecretsManagerClient.builder().region(region).build())
     }
 
+    AWSSecretsManagerResolver() {
+        this(SecretsManagerClient.create())
+    }
+
     @Override
     Secret<?> resolve(String secretId) {
         GetSecretValueRequest request = GetSecretValueRequest.builder().secretId(secretId).build() as GetSecretValueRequest
