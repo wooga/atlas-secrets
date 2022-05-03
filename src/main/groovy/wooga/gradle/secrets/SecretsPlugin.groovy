@@ -34,7 +34,7 @@ class SecretsPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-        def extension = create_and_configure_extension(project)
+        def extension = createAndConfigureExtension(project)
 
         project.tasks.withType(SecretsTask).configureEach { task ->
             task.secretsKey.convention(extension.secretsKey)
@@ -42,10 +42,10 @@ class SecretsPlugin implements Plugin<Project> {
         }
     }
 
-    protected static SecretsPluginExtension create_and_configure_extension(Project project) {
+    protected static SecretsPluginExtension createAndConfigureExtension(Project project) {
         def extension = project.extensions.create(SecretsPluginExtension, EXTENSION_NAME, DefaultSecretsPluginExtension)
-        extension.secretsKey.convention(SecretsConsts.SECRETS_KEY.getFileValueProvider(project).map({ new SecretKeySpec(it.asFile.bytes, "AES") }).orElse(project.provider({
-            KeySpec spec = new PBEKeySpec(secretsKeyPassword().chars, secretsKeySalt(), SecretsConsts.SECRETS_KEY_ITERATION, SecretsConsts.SECRETS_KEY_LENGTH);
+        extension.secretsKey.convention(SecretsConventions.secretsKey.getFileValueProvider(project).map({ new SecretKeySpec(it.asFile.bytes, "AES") }).orElse(project.provider({
+            KeySpec spec = new PBEKeySpec(secretsKeyPassword().chars, secretsKeySalt(), SecretsConventions.SECRETS_KEY_ITERATION, SecretsConventions.SECRETS_KEY_LENGTH);
             // AES-256
             SecretKeyFactory f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
             byte[] key = f.generateSecret(spec).getEncoded();

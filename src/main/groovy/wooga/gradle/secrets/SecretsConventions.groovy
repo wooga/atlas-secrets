@@ -25,12 +25,9 @@ import javax.crypto.spec.SecretKeySpec
 import java.security.SecureRandom
 import java.security.spec.KeySpec
 
-class SecretsConsts {
+class SecretsConventions {
     static Integer SECRETS_KEY_ITERATION = 65536
     static Integer SECRETS_KEY_LENGTH = 256
 
-    static PropertyLookup SECRETS_KEY = new PropertyLookup(SECRETS_KEY_ENV_VAR, SECRETS_KEY_OPTION, null)
-
-    static String SECRETS_KEY_OPTION = "secrets.secretsKey"
-    static String SECRETS_KEY_ENV_VAR = "SECRETS_SECRETS_KEY"
+    static PropertyLookup secretsKey = new PropertyLookup("SECRETS_SECRETS_KEY", "secrets.secretsKey", null)
 }
