@@ -15,7 +15,7 @@
  */
 
 plugins {
-    id 'net.wooga.plugins' version '2.3.0'
+    id 'net.wooga.plugins' version '3.2.0'
     id 'net.wooga.snyk' version '0.10.0'
     id "net.wooga.snyk-gradle-plugin" version "0.2.0"
     id "net.wooga.cve-dependency-resolution" version "0.4.0"
@@ -28,12 +28,15 @@ pluginBundle {
     website = 'https://wooga.github.io/atlas-secrets/'
     vcsUrl = 'https://github.com/wooga/atlas-secrets'
     tags = ['secrets', 'secrets-manager', 'password', 'credentials']
+}
 
+gradlePlugin {
     plugins {
         secrets {
             id = 'net.wooga.secrets'
             displayName = 'Secrets'
             description = 'Wooga Gradle plugin to fetch secret values'
+            implementationClass = 'wooga.gradle.secrets.SecretsPlugin'
         }
     }
 }
