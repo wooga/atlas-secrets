@@ -16,9 +16,9 @@
 
 package wooga.gradle.secrets
 
+import com.wooga.gradle.BaseSpec
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 
 trait SecretResolverSpec extends BaseSpec {
