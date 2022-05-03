@@ -28,4 +28,4 @@ pluginManagement {
   }
 }
 
-rootProject.name = 'atlas-secrets'
+rootProject.name = 'secrets'
