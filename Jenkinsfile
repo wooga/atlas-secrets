@@ -21,7 +21,6 @@
 @Library('github.com/wooga/atlas-jenkins-pipeline@1.x') _
 
 withCredentials([
-                    string(credentialsId: 'atlas_secrets_coveralls_token', variable: 'coveralls_token'),
                     string(credentialsId: 'aws.secretsmanager.integration.accesskey', variable: 'accesskey'),
                     string(credentialsId: 'aws.secretsmanager.integration.secretkey', variable: 'secretkey'),
                     string(credentialsId: 'atlas_plugins_sonar_token', variable: 'sonar_token'),
@@ -29,6 +28,6 @@ withCredentials([
                 ])
 {
     def env = ["ATLAS_AWS_INTEGRATION_ACCESS_KEY=${accesskey}", "ATLAS_AWS_INTEGRATION_SECRET_KEY=${secretkey}"]
-    buildGradlePlugin platforms: ['macos','windows', 'linux'], coverallsToken: coveralls_token, sonarToken: sonar_token, testEnvironment:env
+    buildGradlePlugin platforms: ['macos','windows', 'linux'], sonarToken: sonar_token, testEnvironment:env
 }
 
